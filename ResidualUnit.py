@@ -29,7 +29,7 @@ class ResidualUnit(keras.layers.Layer):
         return self.activation(Z + skip_Z)
 
 
-def ResNet18(output_dim):
+def ResNet18(output_dim, dropout=0.0):
     model = keras.models.Sequential([
         keras.layers.Conv2D(filters=64, kernel_size=7, strides=2, padding='same'),
         keras.layers.BatchNormalization(),
@@ -37,12 +37,13 @@ def ResNet18(output_dim):
         keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')
     ])
     prev_filters = 64
-    for filters in [64] * 2 + [128] * 2 + [256] * 2 + [512] * 2:
+    for i, filters in enumerate([64] * 2 + [128] * 2 + [256] * 2 + [512] * 2):
         strides = 1 if filters == prev_filters else 2
         model.add(ResidualUnit(filters, strides=strides))
         prev_filters = filters
+        if i % 2 != 0:
+            model.add(keras.layers.Dropout(rate=dropout))
     model.add(keras.layers.GlobalAvgPool2D())
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(output_dim, activation='softmax'))
     return model
-
