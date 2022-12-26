@@ -29,7 +29,7 @@ class ResidualUnit(keras.layers.Layer):
         return self.activation(Z + skip_Z)
 
 
-def ResNet18(output_dim, dropout=0.0):
+def ResNet18(output_dim, dropout_indices, dropout=0.0):
     model = keras.models.Sequential([
         keras.layers.Conv2D(filters=64, kernel_size=7, strides=2, padding='same'),
         keras.layers.BatchNormalization(),
@@ -41,7 +41,7 @@ def ResNet18(output_dim, dropout=0.0):
         strides = 1 if filters == prev_filters else 2
         model.add(ResidualUnit(filters, strides=strides))
         prev_filters = filters
-        if i % 2 != 0:
+        if i in dropout_indices:
             model.add(keras.layers.Dropout(rate=dropout))
     model.add(keras.layers.GlobalAvgPool2D())
     model.add(keras.layers.Flatten())
