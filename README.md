@@ -76,3 +76,4 @@ promising avenue for future research.
 ## Sources:
 
 1. https://openreview.net/forum?id=S1xRbxHYDr
+2. https://jmlr.org/papers/v15/srivastava14a.html
